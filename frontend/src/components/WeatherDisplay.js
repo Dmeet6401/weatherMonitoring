@@ -18,7 +18,7 @@ const WeatherDisplay = ({ getCity }) => {
   const [selectedUnit, setSelectedUnit] = useState('celsius'); 
   // Fetch the latest weather data and summary when the city changes
   useEffect(() => {
-    const newSocket = socketIOClient(`http://localhost:5000`);
+    const newSocket = socketIOClient(process.env.ORIGIN_SOCKET);
     setSocket(newSocket);
     newSocket.emit('citySelected', selectedCity);
 
