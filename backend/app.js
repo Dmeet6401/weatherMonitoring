@@ -11,7 +11,7 @@ const { initSocket } = require('./services/socket'); // Import the socket logic
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.use(cors());
 
 // Middleware
