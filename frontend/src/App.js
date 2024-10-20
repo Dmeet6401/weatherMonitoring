@@ -36,9 +36,12 @@ const App = () => {
   };
 
   const [selectedCity, setCity] = useState('Delhi')
+  const [unit,setUnit] = useState('Delhi')
 
-  const getCity = (city) =>{
+
+  const getCity = (city,unit) =>{
     setCity(city)
+    setUnit(unit)
   }
 
   return (
@@ -50,7 +53,7 @@ const App = () => {
       <main style={styles.main}>
         {/* Component to display the latest weather data */}
         <WeatherDisplay getCity={getCity}/>
-        <WeeklyWeatherSummary city={selectedCity} />
+        <WeeklyWeatherSummary city={selectedCity}/>
       </main>
     </div>
   );

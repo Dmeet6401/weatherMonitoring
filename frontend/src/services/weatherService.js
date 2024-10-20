@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const BASE_URL = "http://localhost:5000/api";
 
-export const fetchLatestWeather = async (city) => {
+export const fetchLatestWeather = async (city, unit) => {
   try {
-    const response = await axios.get(`${BASE_URL}/current-temp?city=${city}`);
+    const response = await axios.get(`${BASE_URL}/current-temp?city=${city}&unit=${unit}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching latest weather data:', error);
@@ -12,9 +12,9 @@ export const fetchLatestWeather = async (city) => {
   }
 };
 
-export const fetchAllTemp = async (city) => {  
+export const fetchAllTemp = async (city, unit) => {  
   try {
-    const response = await axios.get(`${BASE_URL}/all-temperatures?city=${city}`);    
+    const response = await axios.get(`${BASE_URL}/all-temperatures?city=${city}&unit=${unit}`);    
     return response.data;
   } catch (error) {
     console.error('Error fetching weather summary:', error);
@@ -22,9 +22,9 @@ export const fetchAllTemp = async (city) => {
   }
 };
 
-export const fetchWeeklyTemp = async (city) => {  
+export const fetchWeeklyTemp = async (city, unit) => {  
   try {
-    const response = await axios.get(`${BASE_URL}/weekly-temperatures?city=${city}`);    
+    const response = await axios.get(`${BASE_URL}/weekly-temperatures?city=${city}&unit=${unit}`);    
     return response.data;
   } catch (error) {
     console.error('Error fetching weather summary:', error);
@@ -46,12 +46,12 @@ export const setThresholdAndEmail = async (threshold, email) => {
 };
 
 export const sendEmail = async (email, subject, text) => {
-  console.log(email,subject,text);
+  console.log(email, subject, text);
   
   try {
     const response = await axios.post(`${BASE_URL}/send-email`, {
-      email : email,
-      subject : subject,
+      email: email,
+      subject: subject,
       text: text,
     });
     return response.data; // Handle the response data

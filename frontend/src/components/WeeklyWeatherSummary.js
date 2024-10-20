@@ -91,7 +91,7 @@ const WeeklyWeatherSummary = ({city}) => {
           <p>Dominant Weather: {weeklySummary[selectedDay].dominantWeather}</p>
 
           {/* Chart Component */}
-          <TemperatureChart allTemp={weeklySummary[selectedDay].dailyTemp} />
+          <TemperatureChart allTemp={weeklySummary[selectedDay].dailyTemp}/>
         </div>
       )}
     </div>

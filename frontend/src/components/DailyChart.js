@@ -20,7 +20,7 @@ ChartJS.register(
     Legend
 );
 
-const TemperatureChart = ({ allTemp }) => {
+const TemperatureChart = ({ allTemp,unit }) => {
     
     // Prepare data for the chart if allTemp is available
     const labels = allTemp.map(item => new Date(item.timestamp).toLocaleTimeString());
@@ -51,7 +51,7 @@ const TemperatureChart = ({ allTemp }) => {
             y: {
                 title: {
                     display: true,
-                    text: 'Temperature (°C)',
+                    text: `Temperature (° ${unit})`,
                 },
             },
         },

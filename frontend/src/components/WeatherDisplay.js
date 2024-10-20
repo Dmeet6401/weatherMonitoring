@@ -15,6 +15,7 @@ const WeatherDisplay = ({ getCity }) => {
   const [error, setError] = useState(''); // State for error messages
   const [upperThreshold, setUpperThreshold] = useState(0);
   const [lowerThreshold, setLowerThreshold] = useState(0);
+  const [selectedUnit, setSelectedUnit] = useState('celsius'); 
   // Fetch the latest weather data and summary when the city changes
   useEffect(() => {
     const newSocket = socketIOClient(`http://localhost:5000`);
@@ -24,7 +25,7 @@ const WeatherDisplay = ({ getCity }) => {
     // Listen for weather updates from the server
     newSocket.on('update', (event) => {
       // console.log(event);
-      console.log(email,threshold,event[0].temperature, upperThreshold);
+      // console.log(email,threshold,event[0].temperature, upperThreshold);
       
       setWeatherData(event); // Update state with new data
       if(email != "" && threshold != "" && event[0].temperature > threshold && upperThreshold == 0){
@@ -40,16 +41,16 @@ const WeatherDisplay = ({ getCity }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [selectedCity,threshold,email]); // Include selectedCity in dependency array
+  }, [selectedCity,threshold,email,selectedUnit]); // Include selectedCity in dependency array
 
   useEffect(() => {
     const getWeatherData = async () => {
       try {
-        const data = await fetchLatestWeather(selectedCity);
+        const data = await fetchLatestWeather(selectedCity,selectedUnit);
         setWeatherData(data);
 
         // Fetch weather summary data
-        const fetchedAllTemp = await fetchAllTemp(selectedCity);
+        const fetchedAllTemp = await fetchAllTemp(selectedCity,selectedUnit);
         setAllTemp(fetchedAllTemp);
 
         let avg = 0;
@@ -75,7 +76,7 @@ const WeatherDisplay = ({ getCity }) => {
     };
 
     getWeatherData();
-  }, [selectedCity]); // Fetch new data when selectedCity changes
+  }, [selectedCity,selectedUnit]); // Fetch new data when selectedCity changes
 
   // Handle city change event
   const handleCityChange = (event) => {
@@ -109,6 +110,10 @@ const WeatherDisplay = ({ getCity }) => {
       console.error('Error setting threshold:', error);
       setError('Error setting threshold. Please try again.');
     }
+  };
+
+  const handleUnitChange = (event) => {
+    setSelectedUnit(event.target.value); // Update the selected unit
   };
 
   // Styles for WeatherDisplay component
@@ -219,33 +224,49 @@ const WeatherDisplay = ({ getCity }) => {
         <option value="Hyderabad">Hyderabad</option>
       </select>
 
+      <label htmlFor="unit">Select Temperature Unit: </label>
+      <select
+        id="unit"
+        value={selectedUnit}
+        onChange={handleUnitChange}
+        style={styles.select}
+      >
+        <option value="celsius">Celsius</option>
+        <option value="fahrenheit">Fahrenheit</option>
+        <option value="kelvin">Kelvin</option>
+      </select>
+
       <div style={styles.flexContainer}>
         {/* Display Weather Data */}
         <div style={styles.updatesSection}>
-          {weatherData.length > 0 ? (
-            weatherData.map((cityWeather) => (
-              <div style={styles.weatherCard} key={cityWeather._id}>
-                <h3 style={styles.weatherInfo}>{cityWeather._id}</h3>
-                <p style={styles.weatherInfo}>Atmosphere: {cityWeather.main}</p>
-                <p style={styles.weatherInfo}>Temperature: {cityWeather.temperature}°C</p>
-                <p style={styles.weatherInfo}>Feels Like: {cityWeather.feels_like}°C</p>
-                <p style={styles.weatherInfo}>Last Updated: {new Date(cityWeather.timestamp).toLocaleString()}</p>
-              </div>
-            ))
-          ) : (
-            <p>No data available for the selected city.</p>
-          )}
-        </div>
+        {weatherData.length > 0 ? (
+          weatherData.map((cityWeather) => (
+            <div style={styles.weatherCard} key={cityWeather._id}>
+              <h3 style={styles.weatherInfo}>{cityWeather._id}</h3>
+              <p style={styles.weatherInfo}>Atmosphere: {cityWeather.main}</p>
+              <p style={styles.weatherInfo}>
+                Temperature: {parseFloat(cityWeather.temperature).toFixed(2)}° {selectedUnit.charAt(0).toUpperCase() + selectedUnit.slice(1)}
+              </p>
+              <p style={styles.weatherInfo}>
+                Feels Like: {parseFloat(cityWeather.feels_like).toFixed(2)}° {selectedUnit.charAt(0).toUpperCase() + selectedUnit.slice(1)}
+              </p>
+              <p style={styles.weatherInfo}>Last Updated: {new Date(cityWeather.timestamp).toLocaleString()}</p>
+            </div>
+          ))
+        ) : (
+          <p>No data available for the selected city.</p>
+        )}
+      </div>
 
         {/* Display Summary Information */}
         {weatherSummary && (
-          <div style={styles.summarySection}>
-            <h3>Daily Weather Summary for {selectedCity}</h3>
-            <p>Min Temperature: {weatherSummary.mini}°C</p>
-            <p>Max Temperature: {weatherSummary.maxi}°C</p>
-            <p>Average Temperature: {weatherSummary.avg.toFixed(2)}°C</p>
-          </div>
-        )}
+        <div style={styles.summarySection}>
+          <h3>Daily Weather Summary for {weatherSummary.city}</h3>
+          <p>Min Temperature: {weatherSummary.mini.toFixed(2)}° {selectedUnit.charAt(0).toUpperCase() + selectedUnit.slice(1)}</p>
+          <p>Max Temperature: {weatherSummary.maxi.toFixed(2)}° {selectedUnit.charAt(0).toUpperCase() + selectedUnit.slice(1)}</p>
+          <p>Average Temperature: {weatherSummary.avg.toFixed(2)}° {selectedUnit.charAt(0).toUpperCase() + selectedUnit.slice(1)}</p>
+        </div>
+      )}
       </div>
 
       {/* Threshold Functionality */}
@@ -275,7 +296,7 @@ const WeatherDisplay = ({ getCity }) => {
         {error && <p style={styles.error}>{error}</p>}
       </div>
 
-      <TemperatureChart allTemp={allTemp} />
+      <TemperatureChart allTemp={allTemp} unit={selectedUnit}/>
     </div>
   );
 };
