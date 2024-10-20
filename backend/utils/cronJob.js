@@ -17,19 +17,7 @@ const scheduleWeatherDataFetch = () => {
   });
 };
 
-// const scheduleWeatherDataFetch = () => {
-//   cron.schedule('*/5 * * * *', async () => {
-//     cities.forEach(async (city) => {
-//       try {
-//         await fetchAndSaveWeatherData(city);
-//         // Call the webhook to update user sessions
-//         await axios.post('http://localhost:5000/api/update-sessions');
-//       } catch (error) {
-//         console.error(`Error saving weather data for ${city}:`, error);
-//       }
-//     });
-//   });
-// };
+
 
 // Schedule summary calculation at midnight every day
 const scheduleWeatherSummaryCalculation = () => {
